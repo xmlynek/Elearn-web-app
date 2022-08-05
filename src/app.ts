@@ -10,6 +10,7 @@ const fileUpload = require('express-fileupload');
 const passport = require('passport');
 const httpStatus = require('http-status');
 const xssClean = require('xss-clean');
+const compression = require('compression');
 
 const ApiError = require('./utils/ApiError');
 const {
@@ -46,6 +47,8 @@ app.use(
     createParentPath: true,
   })
 );
+
+app.use(compression());
 
 app.use(cookieParses());
 
