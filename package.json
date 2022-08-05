@@ -45,6 +45,8 @@
     "nodemon": "^2.0.16",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
+    "swagger-jsdoc": "^6.2.4",
+    "swagger-ui-express": "^4.5.0",
     "winston": "^3.7.2",
     "xss-clean": "^0.1.1"
   },

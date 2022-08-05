@@ -1,0 +1,447 @@
+components:
+  securitySchemes:
+      bearerAuth:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT
+
+  schemas:
+    Registration:
+      type: "object"
+      required:
+        - firstname
+        - lastname
+        - email
+        - password
+        - confirmPassword
+      properties:
+        firstname:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string
+          format: email
+          description: must be unique
+        password:
+          type: string
+          format: password
+          minLength: 8
+          description: At least one number and one letter
+        confirmPassword:
+          type: string
+          format: password
+          description: Must match password above
+      example:
+          firstname: Andrew
+          lastname: Kebab
+          email: andrew.kebab@email.com
+          password: password1
+          confirmPassword: password1
+    Login:
+      type: "object"
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      example:
+          email: andrew.kebab@email.com
+          password: password1
+    ForgotPassword:
+      type: "object"
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+      example:
+        email: andrew.kebab@email.com
+    ResetPassword:
+      type: "object"
+      required:
+        - newPassword
+        - confirmNewPassword
+      properties:
+        newPassword:
+          type: string
+          format: password
+          minLength: 8
+          description: New password. Must contain at least one number and one letter
+        confirmNewPassword:
+          type: string
+          format: password
+          description: Must match new password above
+      example:
+        newPassword: password2
+        confirmNewPassword: password2
+    UserRole:
+      type: string
+      enum:
+        - STUDENT
+        - TEACHER
+        - ADMIN
+    User:
+      type: object
+      required:
+        - firstname
+        - lastname
+        - email
+        - role
+      properties:
+        id:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          nullable: true
+        role:
+          $ref: "#/components/schemas/UserRole"
+      example:
+        id: 1
+        firstname: Andrew
+        lastname: Kebab
+        email: andrew.kebab@email.com
+        password: password1
+        role: STUDENT
+    TokenString:
+      type: string
+      example: 
+        eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJhYzUzNDk1NGI1NDEzOTgwNmMxMTIiLCJpYXQiOjE1ODkyOTg0ODQsImV4cCI6MTU4OTMwMDI4NH0.m1U63blB0MLej_WfB7yC2FTMnCziif9X8yzwDEfJXAg
+    Token:
+      type: object
+      properties:
+        token: 
+          type: string
+      example: 
+        token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJhYzUzNDk1NGI1NDEzOTgwNmMxMTIiLCJpYXQiOjE1ODkyOTg0ODQsImV4cCI6MTU4OTMwMDI4NH0.m1U63blB0MLej_WfB7yC2FTMnCziif9X8yzwDEfJXAg
+    Error:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
+      example:
+        statusCode: 400
+        message: string
+    Video:
+      type: object
+      required:
+        - title
+        - description
+        - author
+        - length
+        - url
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 255
+        author: 
+          type: string
+        length: 
+          type: integer
+          minimum: 1
+        url:
+          type: string
+          format: url
+          maxLength: 255
+      example:
+        id: 1
+        title: 'FiRa Presents: UWB at the Physical Layer'
+        author: 'FiRa Consortium'
+        length: 5
+        description: 'Short video about evolution of UWB technology with IEEE 802.15.4a'
+        url: 'https://www.youtube-nocookie.com/embed/mvO-bbU-CnU'
+    Topic:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+          maxLength: 255
+        filename: 
+          type: string
+        data:
+          type: array
+          items:
+            type: number
+        encoding:
+          type: string
+        size:
+          type: integer
+        mimetype:
+          type: string
+        md5:
+          type: string
+      example:
+        id: 1
+        title: Introduction to UWB technology
+        filename: uwb_intro.pdf
+        data: [1,2,3]
+        md5: 3a56284a5df3c4062bb42a82d86f3217
+        mimetype: application/pdf
+        size: 241334
+        encoding: 7bit
+    Option:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+          maxLength: 255
+        isCorrect:
+          type: boolean
+      example:
+        id: 1
+        title: Kebab
+        isCorrect: true
+    QuestionType:
+      type: string
+      enum:
+        - INPUT
+        - MULTIPLE_CHOICES
+        - SINGLE_CHOICE
+    Question:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+          maxLength: 255
+        position:
+          type: integer
+          minimum: 0
+        points:
+          type: number
+          format: double
+          minimum: 1.0
+        type: 
+          $ref: '#/components/schemas/QuestionType'
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/Option'
+      example:
+        id: 1
+        title: What does not UWB means?
+        position: 1
+        points: 1.25
+        type: INPUT
+    Test:
+      type: object
+      properties:
+        id:
+          type: integer
+        title: 
+          type: string
+          maxLength: 255
+        position: 
+          type: integer
+          minimum: 0
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+      example:
+        id: 1
+        title: UWB intro
+        position: 1
+        questions: 
+          -
+            id: 1
+            title: What does not UWB means?
+            position: 1
+            points: 1.25
+            type: INPUT
+            options:
+              -
+                id: 1
+                title: Kebab
+                isCorrect: true
+    EvaluateTestRequestBody:
+      type: object
+      properties:
+        started_at:
+          type: string
+          format: date-time
+        answers:
+          type: array
+          items:
+            type: object
+            properties:
+              questionId:
+                type: integer
+              type:
+                $ref: '#/components/schemas/QuestionType'
+              answer: 
+                type: array
+                items:
+                  type: object
+    Answer:
+      type: object
+      properties:
+        id:
+          type: integer
+        finishedTestId:
+          type: integer
+        questionId:
+          type: integer
+        points:
+          type: number
+          format: double
+        full_answer:
+          type: string
+        isCorrect:
+          type: boolean
+    EvaluatedTest:
+      type: object
+      required:
+        - started_at
+        - finished_at
+        - maxPoints
+        - resultPoints
+        - testId
+        - testUpdated
+        - userId
+      properties:
+        id:
+          type: integer
+        started_at: 
+          type: string
+          format: date-time
+        finished_at:
+          type: string
+          format: date-time
+        maxPoints: 
+          type: number
+          format: double
+        resultPoints:
+          type: number
+          format: double
+        testId: 
+          type: integer
+        testUpdated:
+          type: boolean
+        userId: 
+          type: integer
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Answer'
+          nullable: true
+        test:
+          $ref: '#/components/schemas/Test'
+          nullable: true
+      example:
+        id: 1
+        started_at: '2022-08-01T20:07:07.000Z'
+        finished_at: '2022-08-01T20:07:23.372Z'
+        maxPoints: 5
+        resultPoints: 5
+        testId: 1
+        testUpdated: false
+        userId: 1
+        answers:
+          - 
+            id: 1
+            finishedTestId: 1
+            questionId: 1
+            points: 5
+            full_answer: UWB
+            isCorrect: true
+                  
+  responses:            
+    DuplicateEmail:
+      description: User with given email already exists
+      content: 
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example: 
+            statusCode: 400
+            message: User with given email already exists
+    BadRequest:
+      description: Bad request
+      content: 
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example: 
+            statusCode: 400
+            message: string
+    EmailNotFound:
+      description: Email not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            statusCode: 404
+            message: User with given email not found
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            statusCode: 401
+            message: Authentication required
+    InvalidRefreshToken:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            statusCode: 401
+            message: Invalid refresh token. Authentication required
+    Forbidden:
+      description: Forbidden
+      content:
+       application/json:
+        schema:
+          $ref: '#/components/schemas/Error'
+        example:
+            statusCode: 403
+            message: You dont have permission to perform this action!
+    TokenHasExpired:
+      description: Token has expired
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            statusCode: 400
+            message: Token has expired
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            statusCode: 404
+            message: Not Found

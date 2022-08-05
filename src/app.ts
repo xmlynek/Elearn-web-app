@@ -18,6 +18,7 @@ const {
   testRoutes,
   topicRoutes,
   userRoutes,
+  docsRoutes,
 } = require('./routes/v1');
 const { errorHandler, errorConverter } = require('./middlewares/errorHandler');
 const jwtStrategy = require('./config/passport');
@@ -66,6 +67,7 @@ app.use('/api/v1/videos', videoRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/tests', testRoutes);
 app.use('/api/v1/topics', topicRoutes);
+app.use('/api/v1/api-docs', docsRoutes);
 
 // send back a 404 error for any unknown api request
 app.get('*', (req: Request, res: Response) => {
