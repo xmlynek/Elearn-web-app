@@ -25,9 +25,9 @@ function CurrentTopicPage() {
 
   useEffect(() => {
     if (topicId && parseInt(topicId) > 0) {
-      fetchById(parseInt(topicId));
+       fetchById(parseInt(topicId));
     }
-  }, [topicId, fetchById]);
+  }, []);
 
   const deleteHandler = (id: any) => {
     if (id && typeof id === "string") {
@@ -60,7 +60,7 @@ function CurrentTopicPage() {
     return (
       <p className="centerVertical h1 bg-info py-2 px-3">
         {error === "Request failed with status code 404"
-          ? `Používateľ s ID ${topicId} nebol nájdený`
+          ? `Topik s ID ${topicId} nebol nájdený`
           : error}
       </p>
     );
