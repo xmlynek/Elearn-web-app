@@ -6,8 +6,16 @@
   "scripts": {
     "start": "ts-node src/server.ts",
     "dev": "nodemon src/server.ts",
-    "prisma:migrate": "dotenv -e config.env -- npx prisma migrate dev --name mysql-init",
-    "debug": "ndb src/server.ts"
+    "build": "tsc && cd client && npm install && npm run build",
+    "prisma:migrate": "dotenv -e config.env -- npx prisma migrate dev --name prisma-init",
+    "prisma:push": "dotenv -e config.env -- npx prisma db push --preview-feature",
+    "debug": "ndb src/server.ts",
+    "predocker:build": "cd client && npm install && npm run build",
+    "docker:build": "docker build -f Dockerfile -t xmlynek/react-node-elearn-app:latest -t xmlynek/react-node-elearn-app:%npm_package_version% .",
+    "docker:push": "docker push --all-tags xmlynek/react-node-elearn-app",
+    "docker-compose:start": "docker-compose up",
+    "docker-compose:start-d": "docker-compose up -d",
+    "docker-compose:down": "docker-compose down"
   },
   "prisma": {
     "schema": "src/prisma/schema.prisma"
@@ -20,7 +28,7 @@
   "author": "Filip Mlýnek <mlynekff@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^3.14.0",
+    "@prisma/client": "^3.15.2",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -53,7 +61,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.4",
     "prettier": "^2.6.1",
-    "prisma": "^3.11.1",
+    "prisma": "^3.15.2",
     "ts-node": "^10.8.2",
     "typescript": "^4.7.4"
   },

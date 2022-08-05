@@ -1,0 +1,5 @@
+node_modules
+.git
+.gitignore
+mysql
+client/node_modules
