@@ -36,6 +36,7 @@
         "node_modules"
     ],
     "files": [
-        "./src/types/express/index.d.ts"
+        "./src/types/express/index.d.ts",
+        "./src/types/env/environment.d.ts"
     ]
 }
