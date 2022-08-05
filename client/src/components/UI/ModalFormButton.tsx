@@ -4,8 +4,8 @@ import ModalLayout from "../Layout/ModalLayout";
 
 type Props = {
   btnVariant?: string;
-  modalTitle: string;
-  btnTitle: string;
+  modalTitle: string | React.ReactNode;
+  btnTitle: string | React.ReactNode;
   icon?: React.ReactNode;
   className?: string;
   callbackFunc?: Function;

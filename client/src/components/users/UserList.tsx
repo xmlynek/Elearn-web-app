@@ -1,7 +1,8 @@
-import { ListGroup } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import User from "../../models/User";
-import classes from "./UserList.module.css";
+import { ListGroup } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import useLangTranslation from '../../hooks/useLangTranslation';
+import User from '../../models/User';
+import classes from './UserList.module.css';
 
 type Props = {
   className?: string;
@@ -9,6 +10,7 @@ type Props = {
 };
 
 const UserList: React.FC<Props> = (props) => {
+  const translations = useLangTranslation();
   const navigate = useNavigate();
 
   return (
@@ -16,9 +18,9 @@ const UserList: React.FC<Props> = (props) => {
       <ListGroup.Item disabled>
         <div className={classes.flexRow}>
           <span>ID</span>
-          <span>Meno a priezvisko</span>
+          <span>{translations?.fullNameLabel}</span>
           <span>Email</span>
-          <span>Rola</span>
+          <span>{translations?.userRoleLabel}</span>
         </div>
       </ListGroup.Item>
       {props.users.map((user) => (

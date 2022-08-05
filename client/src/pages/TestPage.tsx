@@ -1,18 +1,20 @@
-import { Formik, Form, FormikValues } from "formik";
-import { useContext, useEffect } from "react";
-import { Col, Row } from "react-bootstrap";
-import { useParams } from "react-router-dom";
-import TestQuestion from "../components/tests/TestQuestion";
-import ContainerWrapper from "../components/Layout/ContainerWrapper";
-import LoadingSpinner from "../components/UI/LoadingSpinner";
+import { Formik, Form, FormikValues } from 'formik';
+import { useContext, useEffect } from 'react';
+import { Col, Row } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
+import TestQuestion from '../components/tests/TestQuestion';
+import ContainerWrapper from '../components/Layout/ContainerWrapper';
+import LoadingSpinner from '../components/UI/LoadingSpinner';
 import {
   QuestionEvaluateRequest,
   TestQuestionType,
-} from "../models/TestQuestionClass";
-import TestContext from "../store/test-context";
-import ConfirmDialogButton from "../components/UI/ConfirmDialogButton";
+} from '../models/TestQuestionClass';
+import TestContext from '../store/test-context';
+import ConfirmDialogButton from '../components/UI/ConfirmDialogButton';
+import useLangTranslation from '../hooks/useLangTranslation';
 
 const TestPage: React.FC = () => {
+  const translations = useLangTranslation();
   const params = useParams();
 
   const testId = params.testId;
@@ -29,7 +31,7 @@ const TestPage: React.FC = () => {
     }
   }, [fetchById, testId]);
 
-  if (status === "Pending") {
+  if (status === 'Pending') {
     return (
       <div className="centered">
         <LoadingSpinner />
@@ -39,13 +41,13 @@ const TestPage: React.FC = () => {
 
   if (
     error ||
-    status === "Failure" ||
-    (status === "Finished" && (!tests || tests.length === 0))
+    status === 'Failure' ||
+    (status === 'Finished' && (!tests || tests.length === 0))
   ) {
     return (
       <p className="centerVertical h1 bg-info py-2 px-3">
-        {error === "Request failed with status code 404"
-          ? `Test s ID ${testId} nebol nájdený`
+        {error === 'Request failed with status code 404'
+          ? `${translations?.testNotFound} ${testId}`
           : error}
       </p>
     );
@@ -55,11 +57,11 @@ const TestPage: React.FC = () => {
 
   test.questions.forEach((question) => {
     if (question.type === TestQuestionType.INPUT) {
-      options[`${question.id}`] = "";
+      options[`${question.id}`] = '';
     } else if (question.type === TestQuestionType.SINGLE_CHOICE) {
-      options[`${question.id}`] = "";
+      options[`${question.id}`] = '';
     } else if (question.type === TestQuestionType.MULTIPLE_CHOICES) {
-      options[`${question.id}`] = "";
+      options[`${question.id}`] = '';
     }
   });
 
@@ -74,8 +76,12 @@ const TestPage: React.FC = () => {
             type: question.type,
             answer:
               question.type === TestQuestionType.MULTIPLE_CHOICES
-                ? (usersAnswer ? usersAnswer : [""])
-                : usersAnswer ? [usersAnswer] : [""],
+                ? usersAnswer
+                  ? usersAnswer
+                  : ['']
+                : usersAnswer
+                ? [usersAnswer]
+                : [''],
           };
         }),
       },
@@ -88,7 +94,9 @@ const TestPage: React.FC = () => {
       <Row>
         <Col>
           <header className="text-center">
-            <h1 className="display-2 txt-main">Test: {test.title}</h1>
+            <h1 className="display-2 txt-main">
+              {`${translations?.testLabel}: ${test.title}`}
+            </h1>
           </header>
         </Col>
       </Row>
@@ -114,14 +122,14 @@ const TestPage: React.FC = () => {
               ))}
               <div className="centered">
                 <ConfirmDialogButton
-                  confirmBtnTitle="Odoslať"
-                  headerTitle="Naozaj chcete odoslať a vyhodnotiť tento test?"
-                  title="Odoslanie testu"
+                  confirmBtnTitle={translations?.submitLabel}
+                  bodyMessage={translations?.testSubmissionModalBody}
+                  title={translations?.testSubmissionModalTitle}
                   onConfirm={handleSubmit}
                   confirmBtnVariant="primary"
                   className="width-50-991-100"
                 >
-                  Odoslat
+                  {translations?.submitLabel}
                 </ConfirmDialogButton>
               </div>
             </Form>

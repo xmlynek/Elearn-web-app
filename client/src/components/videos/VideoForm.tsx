@@ -1,13 +1,14 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Button } from 'react-bootstrap';
 import * as Yup from 'yup';
+import useLangTranslation from '../../hooks/useLangTranslation';
 import VideoClass from '../../models/VideoClass';
 import classes from './VideoForm.module.css';
 
 type Props = {
   video?: VideoClass | null;
   onSubmit: (data: any) => void;
-  submitBtnText: string;
+  submitBtnText: string | React.ReactNode;
 };
 
 type FormValues = {
@@ -20,7 +21,9 @@ type FormValues = {
 
 const URL = 'https://www.youtube-nocookie.com/embed/';
 
-const NewVideoForm: React.FC<Props> = (props) => {
+const VideoForm: React.FC<Props> = (props) => {
+  const translations = useLangTranslation();
+
   const initValues: FormValues =
     props.video != null
       ? {
@@ -42,13 +45,13 @@ const NewVideoForm: React.FC<Props> = (props) => {
     <Formik
       initialValues={initValues}
       validationSchema={Yup.object({
-        title: Yup.string().trim().required('Povinné'),
-        author: Yup.string().trim().required('Povinné'),
-        description: Yup.string().trim().required('Povinné'),
-        url: Yup.string().trim().required('Povinné'),
+        title: Yup.string().trim().required(translations?.isRequiredErr),
+        author: Yup.string().trim().required(translations?.isRequiredErr),
+        description: Yup.string().trim().required(translations?.isRequiredErr),
+        url: Yup.string().trim().required(translations?.isRequiredErr),
         length: Yup.number()
-          .min(1, 'Video musí mať aspoň 1 minútu')
-          .required('Povinné'),
+          .min(1, translations?.videoMustBeAtLeast1minLongErr)
+          .required(translations?.isRequiredErr),
       })}
       onSubmit={(values, { setSubmitting }) => {
         values.url = URL + values.url;
@@ -59,7 +62,7 @@ const NewVideoForm: React.FC<Props> = (props) => {
       {({ errors, touched }) => (
         <Form className={`form-floating mb-3 ${classes.form}`}>
           <div className="mt-3 mb-4">
-            <label htmlFor="title">Názov videa</label>
+            <label htmlFor="title">{translations?.titleLabel}</label>
             <Field
               name="title"
               type="text"
@@ -69,11 +72,11 @@ const NewVideoForm: React.FC<Props> = (props) => {
               placeholder="UWB Technology"
             />
             <ErrorMessage name="title">
-              {(msg) => <div className="error-msg">*{msg}</div>}
+              {(msg) => <div className="error-msg">{msg}</div>}
             </ErrorMessage>
           </div>
           <div className="mt-1 mb-4">
-            <label htmlFor="author">Autor</label>
+            <label htmlFor="author">{translations?.authorLabel}</label>
             <Field
               name="author"
               type="text"
@@ -83,12 +86,14 @@ const NewVideoForm: React.FC<Props> = (props) => {
               placeholder="FiRa Consortium"
             />
             <ErrorMessage name="author">
-              {(msg) => <div className="error-msg">*{msg}</div>}
+              {(msg) => <div className="error-msg">{msg}</div>}
             </ErrorMessage>
           </div>
 
           <div className="mt-1 mb-4">
-            <label htmlFor="description">Popis videa</label>
+            <label htmlFor="description">
+              {translations?.descriptionLabel}
+            </label>
             <Field
               name="description"
               as="textarea"
@@ -96,15 +101,15 @@ const NewVideoForm: React.FC<Props> = (props) => {
               className={`form-control ${
                 errors.description && touched.description ? 'is-invalid' : ''
               }`}
-              placeholder="Krátke video obsahujúce..."
+              placeholder={translations?.descriptionPlaceholder}
             />
             <ErrorMessage name="description">
-              {(msg) => <div className="error-msg">*{msg}</div>}
+              {(msg) => <div className="error-msg">{msg}</div>}
             </ErrorMessage>
           </div>
 
           <div className="mt-1 mb-4">
-            <label htmlFor="url">Odkaz/link na video</label>
+            <label htmlFor="url">{translations?.urlLinkLabel}</label>
             <div className="input-group">
               <div className="input-group-prepend">
                 <span className="input-group-text d-lg-block d-none">
@@ -130,12 +135,14 @@ const NewVideoForm: React.FC<Props> = (props) => {
               />
             </div>
             <ErrorMessage name="url">
-              {(msg) => <div className="error-msg">*{msg}</div>}
+              {(msg) => <div className="error-msg">{msg}</div>}
             </ErrorMessage>
           </div>
 
           <div className="mt-1 mb-4">
-            <label htmlFor="length">Dĺžka videa (minúty)</label>
+            <label htmlFor="length">
+              {translations?.videoMinutesLengthLabel}
+            </label>
             <Field
               name="length"
               type="number"
@@ -145,7 +152,7 @@ const NewVideoForm: React.FC<Props> = (props) => {
               placeholder="5"
             />
             <ErrorMessage name="length">
-              {(msg) => <div className="error-msg">*{msg}</div>}
+              {(msg) => <div className="error-msg">{msg}</div>}
             </ErrorMessage>
           </div>
 
@@ -160,4 +167,4 @@ const NewVideoForm: React.FC<Props> = (props) => {
   );
 };
 
-export default NewVideoForm;
+export default VideoForm;

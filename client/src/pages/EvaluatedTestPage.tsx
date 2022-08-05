@@ -1,23 +1,25 @@
-import { useEffect, useState } from "react";
-import { Col, Form, Row } from "react-bootstrap";
-import { useParams } from "react-router-dom";
-import ContainerWrapper from "../components/Layout/ContainerWrapper";
-import LoadingSpinner from "../components/UI/LoadingSpinner";
-import usePrivateAxios from "../hooks/usePrivateAccessTokenAxios";
-import { EvalutedTestDetail } from "../models/EvaluatedTest";
+import { useEffect, useState } from 'react';
+import { Col, Form, Row } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
+import ContainerWrapper from '../components/Layout/ContainerWrapper';
+import LoadingSpinner from '../components/UI/LoadingSpinner';
+import useLangTranslation from '../hooks/useLangTranslation';
+import usePrivateAxios from '../hooks/usePrivateAccessTokenAxios';
+import { EvalutedTestDetail } from '../models/EvaluatedTest';
 import TestQuestionClass, {
   TestQuestionType,
-} from "../models/TestQuestionClass";
+} from '../models/TestQuestionClass';
 
 const EvalutedTestPage: React.FC = (props) => {
   const [evalTest, setEvalTest] = useState<EvalutedTestDetail>();
   const params = useParams();
+  const translations = useLangTranslation();
   const axiosPrivate = usePrivateAxios(
     `/users/${params?.userId}/tests/${params?.evalTestId}`
   );
 
   const [state, setState] = useState<{
-    status?: "err" | "success";
+    status?: 'err' | 'success';
     isLoading: boolean;
     msg?: string;
   }>({
@@ -28,12 +30,12 @@ const EvalutedTestPage: React.FC = (props) => {
     const loadData = async () => {
       setState({ isLoading: true });
       try {
-        let { data } = await axiosPrivate.get("");
+        let { data } = await axiosPrivate.get('');
         setEvalTest(data);
-        setState({ status: "success", isLoading: false });
+        setState({ status: 'success', isLoading: false });
       } catch (err: any) {
         setState({
-          status: "err",
+          status: 'err',
           isLoading: false,
           msg: err.response.data.message
             ? err.response.data.message
@@ -56,7 +58,7 @@ const EvalutedTestPage: React.FC = (props) => {
     const answer = evalTest?.answers.filter(
       (answ) => answ.questionId === questionId
     );
-    return answer && answer.length > 0 ? answer[0].full_answer : "";
+    return answer && answer.length > 0 ? answer[0].full_answer : '';
   };
 
   const getQuestionPoints = (questionId: number) => {
@@ -91,13 +93,13 @@ const EvalutedTestPage: React.FC = (props) => {
     );
   }
 
-  if (state.status === "err" && !state.isLoading) {
+  if (state.status === 'err' && !state.isLoading) {
     return (
       <p className="centerVertical h1 bg-info py-2 px-3 text-center">
-        {state.msg === "Evaluated test with id 15 not found"
-          ? `Vysledok testu s ID ${params.evalTestId} nebol nájdený`
-          : state.msg === "You dont have permission to perform this action!"
-          ? "Nemáte dosatočné oprávnenie aby ste mohli prezerať testy iných používateľov!"
+        {state.msg === `Evaluated test with id ${params.evalTestId} not found`
+          ? `${translations?.evaluatedTestNotFound} ${params.evalTestId}`
+          : state.msg === 'You dont have permission to perform this action!'
+          ? translations?.unauthorizedErr
           : state.msg}
       </p>
     );
@@ -106,7 +108,7 @@ const EvalutedTestPage: React.FC = (props) => {
   if (!evalTest) {
     return (
       <p className="centerVertical h1 bg-info py-2 px-3">
-        {`Vysledok testu s ID ${params.evalTestId} nebol nájdený`}
+        {`${translations?.evaluatedTestNotFound} ${params.evalTestId}`}
       </p>
     );
   }
@@ -117,7 +119,7 @@ const EvalutedTestPage: React.FC = (props) => {
         <Col>
           <header className="text-center">
             <h1 className="display-2 txt-main mb-3 mb-lg-4">
-              Výsledok testu
+              {translations?.evaluatedTestTitle}
               <br /> {evalTest.test.title}
             </h1>
           </header>
@@ -126,37 +128,35 @@ const EvalutedTestPage: React.FC = (props) => {
       <Row className="px-1 px-md-3 px-lg-4 px-xl-5">
         {evalTest.testUpdated && (
           <div className="centered error-msg">
-            <p className="h1">
-              Test bol upravený. Náhľad obsahuje len základné informácie.
-            </p>
+            <p className="h1">{translations?.evalTestTestWasModifiedLabel}</p>
           </div>
         )}
         <div className="centered">
           <h2 className="line-height-md">
-            Počet získaných bodov: {evalTest?.resultPoints}/
+            {translations?.numberOfPointsEarnedLabel}: {evalTest?.resultPoints}/
             {evalTest?.maxPoints} (
             {((evalTest?.resultPoints / evalTest?.maxPoints) * 100).toFixed(2)}
             %)
             <br />
-            Dátum a čas otvorenia:{" "}
+            {translations?.oppenedTestAtLabel}:{' '}
             {new Date(evalTest.started_at).toLocaleString()}
             <br />
-            Dátum a čas odovzdania:{" "}
+            {translations?.submitTestTimeLabel}:{' '}
             {new Date(evalTest.finished_at).toLocaleString()}
           </h2>
         </div>
         {evalTest.testUpdated && (
           <section className="text-center">
-            <h2>Vyplnené odpovede</h2>
+            <h2>{translations?.completedAnswersLabel}</h2>
             <p className="h2 error-msg">
-              Bodovanie nemusí odpovedať konečnému výsledku testu!
+              {translations?.pointsMayNotCorrespondToFinalResultLabel}
             </p>
             <table className="mt-4 table">
               <thead>
                 <tr>
-                  <th>Odpoveď</th>
-                  <th>Správna</th>
-                  <th>Body</th>
+                  <th>{translations?.answerLabel}</th>
+                  <th>{translations?.correctAnswerCheckBoxLabel}</th>
+                  <th>{translations?.numberOfPointsEarnedLabel}</th>
                 </tr>
               </thead>
               <tbody>
@@ -164,7 +164,11 @@ const EvalutedTestPage: React.FC = (props) => {
                   return (
                     <tr key={answer.id}>
                       <td>{answer.full_answer}</td>
-                      <td>{answer.isCorrect ? "Áno" : "Nie"}</td>
+                      <td>
+                        {answer.isCorrect
+                          ? translations?.yesAnswer
+                          : translations?.noAnswer}
+                      </td>
                       <td>{answer.points}</td>
                     </tr>
                   );
@@ -183,27 +187,27 @@ const EvalutedTestPage: React.FC = (props) => {
               </h2>
               <Form.Group className="mt-4 mb-3">
                 {question.type === TestQuestionType.INPUT ? (
-                  <div key={question.id + index + ".text"}>
+                  <div key={question.id + index + '.text'}>
                     <Form.Control
                       value={getInputAnswer(question.id)}
                       readOnly
                       className={`${
                         checkInputAnswer(question, getInputAnswer(question.id))
                           .isCorrect
-                          ? "is-valid"
-                          : "is-invalid"
+                          ? 'is-valid'
+                          : 'is-invalid'
                       }`}
                     />
                     {!checkInputAnswer(question, getInputAnswer(question.id))
                       .isCorrect && (
                       <p>
-                        Správna odpoveď:{" "}
+                        Správna odpoveď:{' '}
                         {checkInputAnswer(
                           question,
                           getInputAnswer(question.id)
                         ).correctAnswers.map((answ, index) => (
                           <span key={`${question.id}${answ}${index}`}>
-                            {answ},{" "}
+                            {answ},{' '}
                           </span>
                         ))}
                       </p>
@@ -213,27 +217,27 @@ const EvalutedTestPage: React.FC = (props) => {
                   question.options.map((option, index) => (
                     <div key={option.id}>
                       <span className="ms-2 ms-sm-3">
-                        {String.fromCharCode("A".charCodeAt(0) + index)}
+                        {String.fromCharCode('A'.charCodeAt(0) + index)}
                       </span>
                       <Form.Check
                         readOnly
                         type={
                           question.type === TestQuestionType.MULTIPLE_CHOICES
-                            ? "checkbox"
-                            : "radio"
+                            ? 'checkbox'
+                            : 'radio'
                         }
                         checked={checkAnswer(question.id, option.title)}
-                        name={"" + question.id}
-                        className={"d-inline-block ms-1 ms-sm-3"}
+                        name={'' + question.id}
+                        className={'d-inline-block ms-1 ms-sm-3'}
                       />
                       <Form.Label
                         className={`ms-2 ms-sm-3 ${
                           option.isCorrect
-                            ? "text-success"
+                            ? 'text-success'
                             : !option.isCorrect &&
                               checkAnswer(question.id, option.title)
-                            ? "text-danger"
-                            : ""
+                            ? 'text-danger'
+                            : ''
                         }`}
                       >
                         {option.title}

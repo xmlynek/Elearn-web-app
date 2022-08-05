@@ -2,7 +2,7 @@ import { Field, ErrorMessage } from "formik";
 import { CloseButton } from "react-bootstrap";
 
 type Props = {
-  label: string;
+  label: string | React.ReactNode;
   name: string;
   type?: string;
   placeholder?: string;

@@ -3,9 +3,9 @@ import { Button } from "react-bootstrap";
 import ConfirmModalDialog from "./ConfirmModalDialog";
 
 type Props = {
-  headerTitle: string;
-  title: string;
-  confirmBtnTitle: string;
+  bodyMessage: string | React.ReactNode;
+  title: string | React.ReactNode;
+  confirmBtnTitle: string | React.ReactNode;
   confirmBtnVariant?: string;
   className?: string;
   icon?: React.ReactNode;
@@ -27,7 +27,7 @@ const ConfirmDialogButton: React.FC<Props> = (props) => {
     <>
       <ConfirmModalDialog
         show={isShowedDialog}
-        headerTitle={props.headerTitle}
+        bodyMessage={props.bodyMessage}
         onHide={hideDialogHandler}
         title={props.title}
         onConfirm={props.onConfirm}

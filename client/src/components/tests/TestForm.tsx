@@ -1,19 +1,20 @@
-import React, { useState } from "react";
-import { Button } from "react-bootstrap";
-import * as Yup from "yup";
-import { Formik, Form, FieldArray, getIn } from "formik";
+import React, { useState } from 'react';
+import { Button } from 'react-bootstrap';
+import * as Yup from 'yup';
+import { Formik, Form, FieldArray, getIn } from 'formik';
 
 import TestQuestionClass, {
   TestQuestionType,
-} from "../../models/TestQuestionClass";
-import QuestionOptionClass from "../../models/QuestionOptionClass";
-import TestClass from "../../models/TestClass";
-import CustomField from "../UI/CustomField";
+} from '../../models/TestQuestionClass';
+import QuestionOptionClass from '../../models/QuestionOptionClass';
+import TestClass from '../../models/TestClass';
+import CustomField from '../UI/CustomField';
+import useLangTranslation from '../../hooks/useLangTranslation';
 
 type Props = {
   formField?: TestClass;
   onSubmit: Function;
-  submitBtnText: string;
+  submitBtnText: string | React.ReactNode;
   submitBtnVariant?: string;
 };
 
@@ -27,19 +28,21 @@ enum FieldObjType {
 }
 
 const TestForm: React.FC<Props> = (props) => {
+  const translations = useLangTranslation();
+
   const [formData, setFormData] = useState<TestClass>(
     props.formField
       ? props.formField
-      : new TestClass(1, "", -1, [
+      : new TestClass(1, '', -1, [
           new TestQuestionClass(
             Math.random(),
             1,
             1,
-            "",
+            '',
             TestQuestionType.INPUT,
             [
-              new QuestionOptionClass(Math.random(), "", true),
-              new QuestionOptionClass(Math.random(), "", true),
+              new QuestionOptionClass(Math.random(), '', true),
+              new QuestionOptionClass(Math.random(), '', true),
             ]
           ),
         ])
@@ -53,9 +56,9 @@ const TestForm: React.FC<Props> = (props) => {
           Math.random(),
           newState.questions.length + 1,
           1,
-          "",
+          '',
           TestQuestionType.INPUT,
-          [new QuestionOptionClass(Math.random(), "", true)]
+          [new QuestionOptionClass(Math.random(), '', true)]
         )
       );
       return newState;
@@ -82,7 +85,7 @@ const TestForm: React.FC<Props> = (props) => {
       newState.questions[questionIndex].options.push(
         new QuestionOptionClass(
           Math.random(),
-          "",
+          '',
           newState.questions[questionIndex].type === TestQuestionType.INPUT
             ? true
             : false
@@ -167,27 +170,27 @@ const TestForm: React.FC<Props> = (props) => {
   };
 
   const validationSchema = Yup.object().shape({
-    title: Yup.string().required("*Povinné"),
+    title: Yup.string().required(translations?.isRequiredErr),
     questions: Yup.array()
       .of(
         Yup.object().shape({
-          points: Yup.number().min(1, "Minimálny počet bodov je 1"),
-          title: Yup.string().required("*Povinné"),
-          type: Yup.string().required("*Povinné"),
+          points: Yup.number().min(1, translations?.minPointsCountErr),
+          title: Yup.string().required(translations?.isRequiredErr),
+          type: Yup.string().required(translations?.isRequiredErr),
           options: Yup.array()
             .of(
               Yup.object().shape({
-                title: Yup.string().required("*Povinné"),
+                title: Yup.string().required(translations?.isRequiredErr),
                 correct: Yup.boolean(),
               })
             )
-            .min(1, "Otázka musí obsahovať aspoň jednu odpoveď")
-            .required("*Povinné")
-            .max(6, "Maximálny počet odpovedí je 6"),
+            .min(1, translations?.questionMustContainAnswerErr)
+            .required(translations?.isRequiredErr)
+            .max(6, translations?.maxAmountOfAnswersErr),
         })
       )
-      .min(1, "Test musí obsahovať aspoň jednu otázku")
-      .required("*Povinné"),
+      .min(1, translations?.testMustContainQuestionErr)
+      .required(translations?.isRequiredErr),
   });
 
   const validateHandler = (values: TestClass) => {
@@ -207,7 +210,7 @@ const TestForm: React.FC<Props> = (props) => {
       )
         ? {
             ...errors,
-            optNotSelected: "Aspoň jedna odpoveď musí byť označená ako správna",
+            optNotSelected: translations?.oneAnswerMustBeCorrectErr,
           }
         : errors;
     }
@@ -229,15 +232,15 @@ const TestForm: React.FC<Props> = (props) => {
         <Form className="form">
           <div className="list-group-item mt-3 ">
             <CustomField
-              label="Názov testu"
-              name={"title"}
+              label={translations?.testTitleHeader}
+              name={'title'}
               error={errors.title && touched.title ? true : false}
-              placeholder={"Veľký test..."}
+              placeholder={translations?.testTitlePlaceholder}
               onChange={(e: any) => {
                 onChangeHandler(
                   e,
                   FieldObjType.TEST_TITLE,
-                  "title",
+                  'title',
                   setValues,
                   handleChange
                 );
@@ -245,7 +248,7 @@ const TestForm: React.FC<Props> = (props) => {
             />
 
             {/* zero questions error message */}
-            {typeof errors.questions === "string" ? (
+            {typeof errors.questions === 'string' ? (
               <div className="centered error-msg">
                 <h4>{errors.questions}</h4>
               </div>
@@ -266,7 +269,9 @@ const TestForm: React.FC<Props> = (props) => {
                       <div className="list-group-item mt-3 ">
                         <CustomField
                           key={`Otázka ${questionIndex + 1}`}
-                          label={`Otázka ${questionIndex + 1}`}
+                          label={`${translations?.questionLabel} ${
+                            questionIndex + 1
+                          }`}
                           name={`questions.${questionIndex}.title`}
                           withCloseButton={{
                             onDelete: deleteQuestionHandler.bind(
@@ -275,9 +280,9 @@ const TestForm: React.FC<Props> = (props) => {
                               setValues
                             ),
                           }}
-                          as={"textarea"}
+                          as={'textarea'}
                           error={getError(`questions.${questionIndex}.title`)}
-                          placeholder={"Aký je názov..."}
+                          placeholder={translations?.questionPlaceholder}
                           onChange={(e: any) =>
                             onChangeHandler(
                               e,
@@ -294,14 +299,14 @@ const TestForm: React.FC<Props> = (props) => {
                           <div className="col-12 col-md-6">
                             <div className="form-control">
                               <CustomField
-                                label={"Počet bodov"}
+                                label={translations?.numberOfPointsLabel}
                                 name={`questions.${questionIndex}.points`}
                                 error={getError(
                                   `questions.${questionIndex}.points`
                                 )}
-                                className={"mb-2"}
-                                type={"number"}
-                                placeholder={"1"}
+                                className={'mb-2'}
+                                type={'number'}
+                                placeholder={'1'}
                                 onChange={(e: any) =>
                                   onChangeHandler(
                                     e,
@@ -319,9 +324,9 @@ const TestForm: React.FC<Props> = (props) => {
                             <div className="form-control">
                               <CustomField
                                 name={`questions.${questionIndex}.type`}
-                                label={"Typ otázky"}
+                                label={translations?.questionTypeLabel}
                                 as="select"
-                                className={"mb-2"}
+                                className={'mb-2'}
                                 error={getError(
                                   `questions.${questionIndex}.type`
                                 )}
@@ -337,15 +342,15 @@ const TestForm: React.FC<Props> = (props) => {
                                 }
                               >
                                 <option value={TestQuestionType.INPUT}>
-                                  Textový vstup
+                                  {translations?.questionTextInputType}
                                 </option>
                                 <option value={TestQuestionType.SINGLE_CHOICE}>
-                                  Jedna možnosť
+                                  {translations?.questionSingleOptionType}
                                 </option>
                                 <option
                                   value={TestQuestionType.MULTIPLE_CHOICES}
                                 >
-                                  Viacero možností
+                                  {translations?.questionMultipleOptionsType}
                                 </option>
                               </CustomField>
                             </div>
@@ -356,7 +361,7 @@ const TestForm: React.FC<Props> = (props) => {
                         {typeof getIn(
                           errors,
                           `questions.${questionIndex}.options`
-                        ) === "string" ? (
+                        ) === 'string' ? (
                           <div className="centered error-msg">
                             <h4>
                               {getIn(
@@ -384,7 +389,9 @@ const TestForm: React.FC<Props> = (props) => {
                                             setValues
                                           ),
                                         }}
-                                        label={`Odpoveď ${optionIndex + 1}`}
+                                        label={`${translations?.answerLabel} ${
+                                          optionIndex + 1
+                                        }`}
                                         onChange={(e: any) => {
                                           onChangeHandler(
                                             e,
@@ -405,7 +412,9 @@ const TestForm: React.FC<Props> = (props) => {
                                           htmlFor={`questions.${questionIndex}.options.${optionIndex}`}
                                           className="me-3 form-label"
                                         >
-                                          Správna odpoveď
+                                          {
+                                            translations?.correctAnswerCheckBoxLabel
+                                          }
                                         </label>
                                         {
                                           <input
@@ -416,8 +425,8 @@ const TestForm: React.FC<Props> = (props) => {
                                                 TestQuestionType.MULTIPLE_CHOICES ||
                                               question.type ===
                                                 TestQuestionType.INPUT
-                                                ? "checkbox"
-                                                : "radio"
+                                                ? 'checkbox'
+                                                : 'radio'
                                             }`}
                                             checked={option.isCorrect}
                                             disabled={
@@ -489,7 +498,7 @@ const TestForm: React.FC<Props> = (props) => {
                               setValues(formData);
                             }}
                           >
-                            Pridať odpoveď
+                            {translations?.addAnswerLabel}
                           </Button>
                         </div>
                       </div>
@@ -508,7 +517,7 @@ const TestForm: React.FC<Props> = (props) => {
                   setValues(formData);
                 }}
               >
-                Pridať Otázku
+                {translations?.addQuestionLabel}
               </Button>
             </div>
           </div>
@@ -518,7 +527,7 @@ const TestForm: React.FC<Props> = (props) => {
               className="width-50-991-100"
               type="submit"
               variant={`${
-                props.submitBtnVariant ? props.submitBtnVariant : "success"
+                props.submitBtnVariant ? props.submitBtnVariant : 'success'
               }`}
             >
               {props.submitBtnText}

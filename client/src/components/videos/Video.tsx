@@ -1,11 +1,11 @@
-import VideoClass from "../../models/VideoClass";
-import { Accordion } from "react-bootstrap";
-import OptionIcon from "../../assets/icons/OptionsIcon";
-import VideoForm from "./VideoForm";
-import ProtectedComponent from "../UI/ProtectedComponent";
-import { UserRole } from "../../models/User";
-import ModalFormButton from "../UI/ModalFormButton";
-import ConfirmDialogButton from "../UI/ConfirmDialogButton";
+import VideoClass from '../../models/VideoClass';
+import { Accordion } from 'react-bootstrap';
+import VideoForm from './VideoForm';
+import ProtectedComponent from '../UI/ProtectedComponent';
+import { UserRole } from '../../models/User';
+import ConfirmDialogButton from '../UI/ConfirmDialogButton';
+import UpdateModalFormButton from '../UI/UpdateModalFormButton';
+import useLangTranslation from '../../hooks/useLangTranslation';
 
 type Props = {
   className?: string;
@@ -15,6 +15,8 @@ type Props = {
 };
 
 const Video: React.FC<Props> = (props) => {
+  const translations = useLangTranslation();
+
   return (
     <Accordion>
       <Accordion.Item eventKey={`""${props.video.id}`}>
@@ -30,24 +32,20 @@ const Video: React.FC<Props> = (props) => {
               requiredRole={[UserRole.ADMIN, UserRole.TEACHER]}
             >
               <div className="d-flex flex-column d-md-block float-md-end">
-                <ModalFormButton
-                  btnTitle="Upraviť"
-                  modalTitle="Úprava existujúceho videa"
-                  btnVariant="warning"
-                  icon={<OptionIcon />}
-                  className={"me-md-2"}
+                <UpdateModalFormButton
+                  modalTitle={translations?.videoUpdateModalTitle}
                 >
                   <VideoForm
-                    submitBtnText="Uložiť zmenu"
+                    submitBtnText={translations?.updateSubmitButtonLabel}
                     video={props.video}
                     onSubmit={(data: VideoClass) => props.onModify(data)}
                   />
-                </ModalFormButton>
+                </UpdateModalFormButton>
                 <ConfirmDialogButton
-                  confirmBtnTitle="Vymazať"
+                  confirmBtnTitle={translations?.deleteLabel}
                   className="mb-2 mt-2 mb-md-0 mt-md-0"
-                  title="Vymazanie videa"
-                  headerTitle="Naozaj chcete vymazať toto video?"
+                  title={translations?.deleteVideoModalTitle}
+                  bodyMessage={translations?.deleteVideoModalLabel}
                   onConfirm={props.onDelete}
                 />
               </div>
@@ -55,22 +53,23 @@ const Video: React.FC<Props> = (props) => {
             <p>
               {/* {`ID: ${props.video.id}`} */}
               {/* <br /> */}
-              {`Názov: ${props.video.title}`}
+              {`${translations?.titleLabel}: ${props.video.title}`}
               <br />
-              {`Autor: ${props.video.author}`}
+              {`${translations?.authorLabel}: ${props.video.author}`}
               <br />
-              {`Dĺžka: ${props.video.length} minút`}
+              {`${translations?.lengthLabel}: ${props.video.length} min`}
               <br />
-              {`Popis: ${props.video.description}`}
+              {`${translations?.descriptionLabel}: ${props.video.description}`}
               <br />
-              Odkaz: {<a href={props.video.url}>{props.video.url}</a>}
+              {`${translations?.urlLinkLabel}: `}
+              {<a href={props.video.url}>{props.video.url}</a>}
             </p>
           </div>
 
           <iframe
             title={props.video.title}
-            width={"100%"}
-            height={"600"}
+            width={'100%'}
+            height={'600'}
             src={props.video.url}
             allowFullScreen
           />

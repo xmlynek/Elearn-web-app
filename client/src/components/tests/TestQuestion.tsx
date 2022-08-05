@@ -1,9 +1,10 @@
-import { Field, FormikValues } from "formik";
-import { Form } from "react-bootstrap";
+import { Field, FormikValues } from 'formik';
+import { Form } from 'react-bootstrap';
+import useLangTranslation from '../../hooks/useLangTranslation';
 import TestQuestionClass, {
   TestQuestionType,
-} from "../../models/TestQuestionClass";
-import TestQuestionOption from "./TestQuestionOption";
+} from '../../models/TestQuestionClass';
+import TestQuestionOption from './TestQuestionOption';
 
 type Props = {
   question: TestQuestionClass;
@@ -13,9 +14,10 @@ type Props = {
 };
 
 const TestQuestion: React.FC<Props> = (props) => {
+  const translations = useLangTranslation();
   let output = null;
 
-  let optionType: "checkbox" | "radio" = "radio";
+  let optionType: 'checkbox' | 'radio' = 'radio';
   if (props.question.type === TestQuestionType.INPUT) {
     output = (
       <Field
@@ -25,13 +27,13 @@ const TestQuestion: React.FC<Props> = (props) => {
         value={props.values && props.values[`${props.question.id}.text`]}
         name={`${props.question.id}`}
         id={`${props.question.title}${props.question.id}`}
-        placeholder={"Vaša odpoveď"}
+        placeholder={translations?.answerLabel}
       />
     );
   } else if (props.question.type === TestQuestionType.MULTIPLE_CHOICES) {
-    optionType = "checkbox";
+    optionType = 'checkbox';
   } else if (props.question.type === TestQuestionType.SINGLE_CHOICE) {
-    optionType = "radio";
+    optionType = 'radio';
   }
 
   output =
@@ -42,7 +44,7 @@ const TestQuestion: React.FC<Props> = (props) => {
             option={option}
             questionType={optionType}
             key={option.id}
-            index={String.fromCharCode("A".charCodeAt(0) + index)}
+            index={String.fromCharCode('A'.charCodeAt(0) + index)}
           />
         ))
       : output;

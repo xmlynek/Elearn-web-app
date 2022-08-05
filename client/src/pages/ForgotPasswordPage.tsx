@@ -5,9 +5,12 @@ import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { Button } from 'react-bootstrap';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
+import useLangTranslation from '../hooks/useLangTranslation';
 
 const ForgotPasswordPage: React.FC = (props) => {
   const authContext = useContext(AuthContext);
+  const translations = useLangTranslation();
+
   const {
     isLoggedIn,
     forgotPassword,
@@ -27,13 +30,13 @@ const ForgotPasswordPage: React.FC = (props) => {
 
   return (
     <section className="logreg-container text-start">
-      <h3 className="text-center">Zabudnuté heslo</h3>
+      <h3 className="text-center">{translations?.forgotPasswordLabel}</h3>
       <Formik
         validationSchema={Yup.object({
           email: Yup.string()
-            .email('Nesprávny formát emailu')
+            .email(translations?.wrongEmailFormatErr)
             .trim()
-            .required('*Povinné'),
+            .required(translations?.isRequiredErr),
         })}
         initialValues={{ email: '' }}
         onSubmit={({ email }, { resetForm }) => {
@@ -45,7 +48,7 @@ const ForgotPasswordPage: React.FC = (props) => {
           <Form className={`form-floating mb-3`}>
             <div className="mt-3 mb-4">
               <div className="form-control">
-                <label htmlFor="email">Váš email</label>
+                <label htmlFor="email">{translations?.yourEmailLabel}</label>
                 <Field
                   name="email"
                   type="email"
@@ -60,13 +63,13 @@ const ForgotPasswordPage: React.FC = (props) => {
             </div>
             <div className="text-center">
               <Button type="submit" className="width-50-991-100 ">
-                Poslať Email
+                {translations?.sendEmailLabel}
               </Button>
             </div>
             <div className="mt-4 text-center">
               <p>
                 <Link to={'/login'} className="ms-2">
-                  Späť na prihlásenie
+                  {translations?.backToLoginPageLabel}
                 </Link>
               </p>
             </div>
@@ -85,10 +88,7 @@ const ForgotPasswordPage: React.FC = (props) => {
       )}
       {!isLoading && error === '' && success && (
         <div className="centered h4">
-          <p>
-            Na zadaný Email bola odoslaná správa s inštrukciami pre obnovenie
-            hesla
-          </p>
+          <p>{translations?.emailWasSentWithInstructionsMessage}</p>
         </div>
       )}
     </section>

@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { Button } from 'react-bootstrap';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
+import useLangTranslation from '../hooks/useLangTranslation';
 
 const ResetPasswordPage: React.FC = (props) => {
   const authContext = useContext(AuthContext);
@@ -16,7 +17,9 @@ const ResetPasswordPage: React.FC = (props) => {
     error,
     success,
   } = authContext;
+
   const navigate = useNavigate();
+  const translations = useLangTranslation();
   const params = useParams();
   const token = params.token ? params.token : '';
 
@@ -29,20 +32,23 @@ const ResetPasswordPage: React.FC = (props) => {
 
   return (
     <section className="logreg-container text-start">
-      <h3 className="text-center">Obnovenie hesla</h3>
+      <h3 className="text-center">{translations?.restorePasswordHeader}</h3>
       <Formik
         validationSchema={Yup.object({
           newPassword: Yup.string()
             .trim()
-            .required('*Povinné')
-            .min(8, 'Heslo musí mať aspoň 8 znakov')
-            .max(255, 'Maximálny počet znakov je 255')
-            .matches(/\d/, 'Heslo musí obsahovať aspoň jednu číslicu')
-            .matches(/[a-zA-Z]/, 'Heslo musí obsahovať aspoň jedno písmeno'),
+            .required(translations?.isRequiredErr)
+            .min(8, translations?.passwordLengthErr)
+            .max(255, translations?.maxCharLengthErr)
+            .matches(/\d/, translations?.passwordMustContainNumberErr)
+            .matches(/[a-zA-Z]/, translations?.passwordMustContainLetterErr),
           confirmNewPassword: Yup.string()
             .trim()
-            .required('*Povinné')
-            .oneOf([Yup.ref('newPassword')], 'Heslá sa musia zhodovať'),
+            .required(translations?.isRequiredErr)
+            .oneOf(
+              [Yup.ref('newPassword')],
+              translations?.passwordMustMatchErr
+            ),
         })}
         initialValues={{ newPassword: '', confirmNewPassword: '' }}
         onSubmit={(values, { resetForm }) => {
@@ -54,7 +60,9 @@ const ResetPasswordPage: React.FC = (props) => {
           <Form className={`form-floating mb-3`}>
             <div className="mt-3 mb-4">
               <div className="form-control">
-                <label htmlFor="newPassword">Nové heslo</label>
+                <label htmlFor="newPassword">
+                  {translations?.newPasswordLabel}
+                </label>
                 <Field
                   name="newPassword"
                   type="password"
@@ -72,7 +80,9 @@ const ResetPasswordPage: React.FC = (props) => {
 
             <div className="mt-3 mb-4">
               <div className="form-control">
-                <label htmlFor="confirmNewPassword">Potvrďte nové heslo</label>
+                <label htmlFor="confirmNewPassword">
+                  {translations?.confirmNewPasswordLabel}
+                </label>
                 <Field
                   name="confirmNewPassword"
                   type="password"
@@ -89,7 +99,7 @@ const ResetPasswordPage: React.FC = (props) => {
             </div>
             <div className="text-center">
               <Button type="submit" className="width-50-991-100 ">
-                Obnoviť heslo
+                {translations?.restorePasswordSubmitButtonTitle}
               </Button>
             </div>
           </Form>
@@ -106,7 +116,7 @@ const ResetPasswordPage: React.FC = (props) => {
             {error}
             <br />
             <Link to={'/forgot-password'} className="ms-2 mt-2">
-              Znovu obnoviť heslo
+              {translations?.restorePasswordAgainDueErrorHeader}
             </Link>
           </p>
         </div>
@@ -114,9 +124,9 @@ const ResetPasswordPage: React.FC = (props) => {
       {!isLoading && error === '' && success && (
         <div className="centered h4">
           <p>
-            Vaše heslo bolo úspešne zmenené. Je potrebné sa znovu prihlásiť.
+            {translations?.passwordSuccessfullyRestoredMesage}
             <Link to={'/login'} className="ms-2">
-              Prihlásiť sa
+              {translations?.logInLabel}
             </Link>
           </p>
         </div>

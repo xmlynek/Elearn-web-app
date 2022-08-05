@@ -1,15 +1,18 @@
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button } from 'react-bootstrap';
+import useLangTranslation from '../../hooks/useLangTranslation';
 
 type Props = {
   className?: string;
-  title: string;
-  headerTitle: string;
+  title: string | React.ReactNode;
+  bodyMessage: string | React.ReactNode;
   show: boolean;
   onHide: () => void;
   onConfirm: () => void;
 };
 
 const ConfirmModalDialog: React.FC<Props> = (props) => {
+  const translations = useLangTranslation();
+
   return (
     <Modal
       className={props.className}
@@ -18,17 +21,15 @@ const ConfirmModalDialog: React.FC<Props> = (props) => {
       backdrop={true}
     >
       <Modal.Header closeButton>
-        <Modal.Title>
-          {props.title}
-        </Modal.Title>
+        <Modal.Title>{props.title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <h5>{props.headerTitle}</h5>
+        <h5>{props.bodyMessage}</h5>
         {props.children}
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={props.onConfirm}>Potvrdiť</Button>
-        <Button onClick={props.onHide}>Zrušiť</Button>
+        <Button onClick={props.onConfirm}>{translations?.confirmLabel}</Button>
+        <Button onClick={props.onHide}>{translations?.cancelLabel}</Button>
       </Modal.Footer>
     </Modal>
   );

@@ -6,13 +6,15 @@ import User from '../../models/User';
 import EvaluatedTestsList from '../tests/EvaluatedTestsList';
 import ContainerWrapper from '../Layout/ContainerWrapper';
 import LoadingSpinner from '../UI/LoadingSpinner';
+import useLangTranslation from '../../hooks/useLangTranslation';
 
 type Props = {
   user: User;
-  header?: string;
+  header?: string | React.ReactNode;
 };
 
 const UserInfo: React.FC<Props> = (props) => {
+  const translations = useLangTranslation();
   const { user, header } = props;
 
   const [evalTests, setEvalTests] = useState<EvalutedTest[]>();
@@ -58,8 +60,8 @@ const UserInfo: React.FC<Props> = (props) => {
         </div>
       )}
       {state.status === 'success' && !state.isLoading && evalTests && (
-        <div className='mt-4'>
-          <h3>Vypracované testy</h3>
+        <div className="mt-4">
+          <h3>{translations?.evaluatedTestListLabel}</h3>
           <EvaluatedTestsList tests={evalTests} />
         </div>
       )}
@@ -72,7 +74,7 @@ const UserInfo: React.FC<Props> = (props) => {
         <Col>
           <div className="centered">
             <h2 className="display-2 txt-main">
-              {header ? header : `Profil používateľa ${user.firstname}`}
+              {header ? header : `${translations?.userProfileOfHeader} ${user.firstname}`}
             </h2>
           </div>
         </Col>
@@ -86,13 +88,13 @@ const UserInfo: React.FC<Props> = (props) => {
         </Row>
         <Row>
           <Col>
-            <p className="float-end">Meno</p>
+            <p className="float-end">{translations?.firstNameLabel}</p>
           </Col>
           <Col>{user.firstname}</Col>
         </Row>
         <Row>
           <Col>
-            <p className="float-end">Priezvisko</p>
+            <p className="float-end">{translations?.lastNameLabel}</p>
           </Col>
           <Col>{user.lastname}</Col>
         </Row>
@@ -104,7 +106,7 @@ const UserInfo: React.FC<Props> = (props) => {
         </Row>
         <Row>
           <Col>
-            <p className="float-end">Typ účtu</p>
+            <p className="float-end">{translations?.userRoleLabel}</p>
           </Col>
           <Col>{user.role}</Col>
         </Row>
@@ -112,7 +114,7 @@ const UserInfo: React.FC<Props> = (props) => {
         <div className="text-center mt-3">{props.children}</div>
         <div className="text-center mt-2">
           <Button onClick={loadTestsHandler} className="me-2 width-50-991-100">
-            Zobraziť vypracované testy
+            {translations?.showEvaluatedTestListLabel}
           </Button>
           {evalTestListOutput}
         </div>

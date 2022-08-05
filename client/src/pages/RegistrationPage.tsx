@@ -3,10 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import LoadingSpinner from '../components/UI/LoadingSpinner';
 import UserForm from '../components/users/UserForm';
+import useLangTranslation from '../hooks/useLangTranslation';
 import AuthContext from '../store/auth-context';
 
 const RegistrationPage: React.FC = (props) => {
   const authContext = useContext(AuthContext);
+  const translations = useLangTranslation();
   const { isLoggedIn, user, resetStateVariables } = authContext;
   const navigate = useNavigate();
 
@@ -19,10 +21,10 @@ const RegistrationPage: React.FC = (props) => {
 
   return (
     <section className="logreg-container">
-      <h3 className="text-center">Registrácia</h3>
+      <h3 className="text-center">{translations?.registrationNavbarHeader}</h3>
       <UserForm
         registration={true}
-        onSubmitText={'Zaregistrovať'}
+        onSubmitText={translations?.registrationSubmitButtonTitle}
         onSubmit={(val: any) => {
           authContext.register({
             firstname: val.firstname,
@@ -35,9 +37,9 @@ const RegistrationPage: React.FC = (props) => {
       />
       <div className="mt-4 text-center">
         <p>
-          Už máte účet?
+          {translations?.alreadyRegisteredQuestion}
           <Link to={'/login'} className="ms-2">
-            Prihláste sa
+            {translations?.logInLabel}
           </Link>
         </p>
       </div>

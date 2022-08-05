@@ -1,7 +1,8 @@
-import { useContext } from "react";
-import { Link, Navigate, useLocation } from "react-router-dom";
-import { UserRole } from "../../models/User";
-import AuthContext from "../../store/auth-context";
+import { useContext } from 'react';
+import { Link, Navigate, useLocation } from 'react-router-dom';
+import useLangTranslation from '../../hooks/useLangTranslation';
+import { UserRole } from '../../models/User';
+import AuthContext from '../../store/auth-context';
 
 type Props = {
   redirectPath?: string;
@@ -10,7 +11,9 @@ type Props = {
 
 const ProtectedRoute: React.FC<Props> = (props) => {
   const location = useLocation();
+  const translations = useLangTranslation();
   const authCtx = useContext(AuthContext);
+
   const isAuthenticated = authCtx.isLoggedIn;
   const userRole = authCtx.user?.role;
 
@@ -19,7 +22,10 @@ const ProtectedRoute: React.FC<Props> = (props) => {
       userRole &&
       props.requiredRole &&
       props.requiredRole.includes(userRole)) ||
-    (!props.requiredRole && isAuthenticated && userRole && Object.values(UserRole).includes(userRole))
+    (!props.requiredRole &&
+      isAuthenticated &&
+      userRole &&
+      Object.values(UserRole).includes(userRole))
   ) {
     return <>{props.children}</>;
   }
@@ -33,15 +39,22 @@ const ProtectedRoute: React.FC<Props> = (props) => {
     return (
       <div className="centered h4 mt-5">
         <p>
-          Pre zobrazenie tejto stránky nemáte dostatočné oprávnenia!
+          {translations?.unauthorizedErr}
           <br />
-          <Link className="d-block mt-3" to={"/"}>Domovská stránka</Link>
+          <Link className="d-block mt-3" to={'/'}>
+            {translations?.redirectToHomepageLabel}
+          </Link>
         </p>
       </div>
     );
   }
 
-  return <Navigate state={{from: location}} to={props.redirectPath ? props.redirectPath : "/login"} />;
+  return (
+    <Navigate
+      state={{ from: location }}
+      to={props.redirectPath ? props.redirectPath : '/login'}
+    />
+  );
 };
 
 export default ProtectedRoute;

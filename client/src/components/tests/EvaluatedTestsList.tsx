@@ -1,7 +1,8 @@
-import { ListGroup } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { EvalutedTest } from "../../models/EvaluatedTest";
-import classes from "./EvaluatedTestsList.module.css";
+import { ListGroup } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import useLangTranslation from '../../hooks/useLangTranslation';
+import { EvalutedTest } from '../../models/EvaluatedTest';
+import classes from './EvaluatedTestsList.module.css';
 
 type Props = {
   tests: EvalutedTest[];
@@ -9,6 +10,7 @@ type Props = {
 
 const EvaluatedTestsList: React.FC<Props> = (props) => {
   const navigate = useNavigate();
+  const translations = useLangTranslation();
   const { tests } = props;
 
   const onClickHandler = (evalTestId: number, userId: number) => {
@@ -16,9 +18,7 @@ const EvaluatedTestsList: React.FC<Props> = (props) => {
   };
 
   if (tests.length === 0) {
-    return (
-      <div className="centered">Neboli nájdené žiadne vypracované testy</div>
-    );
+    return <div className="centered">{translations?.noEvalTestsFound}</div>;
   }
 
   return (
@@ -26,9 +26,9 @@ const EvaluatedTestsList: React.FC<Props> = (props) => {
       <ListGroup.Item disabled>
         <div className={classes.flexRow}>
           <span>Test ID</span>
-          <span>Názov Testu</span>
-          <span>Hodnotenie</span>
-          <span>Dátum a čas odovzdania</span>
+          <span>{translations?.testTitleHeader}</span>
+          <span>{translations?.evaluationPointsLabel}</span>
+          <span>{translations?.submitTestTimeLabel}</span>
         </div>
       </ListGroup.Item>
       {tests.map((test) => (

@@ -2,17 +2,20 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import User, { UserRole } from '../../models/User';
 import * as Yup from 'yup';
 import { Button } from 'react-bootstrap';
+import useLangTranslation from '../../hooks/useLangTranslation';
 
 type Props = {
   formData?: User;
   onSubmit: Function;
-  onSubmitText?: string;
+  onSubmitText?: string | React.ReactNode;
   registration?: boolean;
   ignorePassword?: boolean;
   allowRoleChange?: boolean;
 };
 
 const UserForm: React.FC<Props> = (props) => {
+  const translations = useLangTranslation();
+
   const initialValues = props.formData
     ? {
         firstname: props.formData.firstname,
@@ -35,53 +38,53 @@ const UserForm: React.FC<Props> = (props) => {
 
   if (props.registration) {
     validationSchema = Yup.object({
-      firstname: Yup.string().trim().required('*Povinné'),
-      lastname: Yup.string().trim().required('*Povinné'),
+      firstname: Yup.string().trim().required(translations?.isRequiredErr),
+      lastname: Yup.string().trim().required(translations?.isRequiredErr),
       email: Yup.string()
-        .email('Nesprávny formát emailu')
+        .email(translations?.wrongEmailFormatErr)
         .trim()
-        .required('*Povinné'),
+        .required(translations?.isRequiredErr),
       password: Yup.string()
         .trim()
-        .required('*Povinné')
-        .min(8, 'Heslo musí mať aspoň 8 znakov')
-        .max(255, 'Maximálny počet znakov je 255')
-        .matches(/\d/, 'Heslo musí obsahovať aspoň jednu číslicu')
-        .matches(/[a-zA-Z]/, 'Heslo musí obsahovať aspoň jedno písmeno'),
+        .required(translations?.isRequiredErr)
+        .min(8, translations?.passwordLengthErr)
+        .max(255, translations?.maxCharLengthErr)
+        .matches(/\d/, translations?.passwordMustContainNumberErr)
+        .matches(/[a-zA-Z]/, translations?.passwordMustContainLetterErr),
       confirmPassword: Yup.string()
         .trim()
-        .required('*Povinné')
-        .oneOf([Yup.ref('password')], 'Heslá sa musia zhodovať'),
+        .required(translations?.isRequiredErr)
+        .oneOf([Yup.ref('password')], translations?.passwordMustMatchErr),
       confirmProcessData: Yup.boolean()
-        .required('*Povinné')
-        .oneOf([true], '*Povinné'),
+        .required(translations?.isRequiredErr)
+        .oneOf([true], translations?.isRequiredErr),
     });
   } else {
     validationSchema = Yup.object({
-      firstname: Yup.string().trim().required('*Povinné'),
-      lastname: Yup.string().trim().required('*Povinné'),
+      firstname: Yup.string().trim().required(translations?.isRequiredErr),
+      lastname: Yup.string().trim().required(translations?.isRequiredErr),
       email: Yup.string()
-        .email('Nesprávny formát emailu')
+        .email(translations?.wrongEmailFormatErr)
         .trim()
-        .required('*Povinné'),
+        .required(translations?.isRequiredErr),
       password: Yup.string()
         .trim()
-        .required('*Povinné')
-        .min(8, 'Heslo musí mať aspoň 8 znakov')
-        .max(255, 'Maximálny počet znakov je 255')
-        .matches(/\d/, 'Heslo musí obsahovať aspoň jednu číslicu')
-        .matches(/[a-zA-Z]/, 'Heslo musí obsahovať aspoň jedno písmeno'),
+        .required(translations?.isRequiredErr)
+        .min(8, translations?.passwordLengthErr)
+        .max(255, translations?.maxCharLengthErr)
+        .matches(/\d/, translations?.passwordMustContainNumberErr)
+        .matches(/[a-zA-Z]/, translations?.passwordMustContainLetterErr),
     });
   }
   if (props.allowRoleChange && props.ignorePassword) {
     validationSchema = Yup.object({
-      firstname: Yup.string().trim().required('*Povinné'),
-      lastname: Yup.string().trim().required('*Povinné'),
+      firstname: Yup.string().trim().required(translations?.isRequiredErr),
+      lastname: Yup.string().trim().required(translations?.isRequiredErr),
       email: Yup.string()
-        .email('Nesprávny formát emailu')
+        .email(translations?.wrongEmailFormatErr)
         .trim()
-        .required('*Povinné'),
-      role: Yup.string().trim().required('*Povinné'),
+        .required(translations?.isRequiredErr),
+      role: Yup.string().trim().required(translations?.isRequiredErr),
     });
   }
 
@@ -98,7 +101,9 @@ const UserForm: React.FC<Props> = (props) => {
           <Form className={`form-floating mb-3`}>
             <div className="mt-3 mb-4">
               <div className="form-control">
-                <label htmlFor="firstname">Meno</label>
+                <label htmlFor="firstname">
+                  {translations?.firstNameLabel}
+                </label>
                 <Field
                   id="firstname"
                   name="firstname"
@@ -114,7 +119,7 @@ const UserForm: React.FC<Props> = (props) => {
 
             <div className="mt-3 mb-4">
               <div className="form-control">
-                <label htmlFor="lastname">Priezvisko</label>
+                <label htmlFor="lastname">{translations?.lastNameLabel}</label>
                 <Field
                   id="lastname"
                   name="lastname"
@@ -147,7 +152,9 @@ const UserForm: React.FC<Props> = (props) => {
             {!props.ignorePassword && (
               <div className="mt-3 mb-4">
                 <div className="form-control">
-                  <label htmlFor="password">Heslo</label>
+                  <label htmlFor="password">
+                    {translations?.passwordLabel}
+                  </label>
                   <Field
                     id="password"
                     name="password"
@@ -167,7 +174,9 @@ const UserForm: React.FC<Props> = (props) => {
               <>
                 <div className="mt-3 mb-4">
                   <div className="form-control">
-                    <label htmlFor="confirmPassword">Potvrdenie hesla</label>
+                    <label htmlFor="confirmPassword">
+                      {translations?.confirmPasswordLabel}
+                    </label>
                     <Field
                       id="confirmPassword"
                       name="confirmPassword"
@@ -194,7 +203,7 @@ const UserForm: React.FC<Props> = (props) => {
                         htmlFor="confirmProcessData"
                         className="form-check-label"
                       >
-                        Súhlasím so spracovaním uvedených údajov
+                        {translations?.consentToDataProcessingLabel}
                       </label>
                       <ErrorMessage name="confirmProcessData">
                         {(msg) => <div className="error-msg">{msg}</div>}
@@ -208,7 +217,9 @@ const UserForm: React.FC<Props> = (props) => {
             {props.allowRoleChange && (
               <div className="mt-3 mb-4">
                 <div className="form-control">
-                  <label htmlFor="confirmPassword">Rola Používateľa</label>
+                  <label htmlFor="confirmPassword">
+                    {translations?.userRoleLabel}
+                  </label>
                   <Field
                     name="role"
                     as="select"

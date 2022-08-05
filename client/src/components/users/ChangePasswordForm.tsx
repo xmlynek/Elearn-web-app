@@ -1,51 +1,61 @@
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { Button } from "react-bootstrap";
-import * as Yup from "yup";
+import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { Button } from 'react-bootstrap';
+import * as Yup from 'yup';
+import useLangTranslation from '../../hooks/useLangTranslation';
 
 type Props = {
-    onSubmit: (values: any) => void;
-    onSubmitText?: string;
-  };
+  onSubmit: (values: any) => void;
+  onSubmitText?: string;
+};
 
 const ChangePasswordForm: React.FC<Props> = (props) => {
+  const translations = useLangTranslation();
+
   return (
     <>
       <Formik
         initialValues={{
-          currentPassword: "",
-          newPassword: "",
-          confirmNewPassword: "",
+          currentPassword: '',
+          newPassword: '',
+          confirmNewPassword: '',
         }}
         validationSchema={Yup.object({
-          currentPassword: Yup.string().trim().required("*Povinné"),
+          currentPassword: Yup.string()
+            .trim()
+            .required(translations?.isRequiredErr),
           newPassword: Yup.string()
             .trim()
-            .required("*Povinné")
-            .min(8, "Heslo musí mať aspoň 8 znakov")
-            .max(255, "Maximálny počet znakov je 255")
-            .matches(/\d/, "Heslo musí obsahovať aspoň jednu číslicu")
-            .matches(/[a-zA-Z]/, "Heslo musí obsahovať aspoň jedno písmeno"),
+            .required(translations?.isRequiredErr)
+            .min(8, translations?.passwordLengthErr)
+            .max(255, translations?.maxCharLengthErr)
+            .matches(/\d/, translations?.passwordMustContainNumberErr)
+            .matches(/[a-zA-Z]/, translations?.passwordMustContainLetterErr),
           confirmNewPassword: Yup.string()
             .trim()
-            .required("*Povinné")
-            .oneOf([Yup.ref("newPassword")], "Heslá sa musia zhodovať"),
+            .required(translations?.isRequiredErr)
+            .oneOf(
+              [Yup.ref('newPassword')],
+              translations?.passwordMustMatchErr
+            ),
         })}
         onSubmit={(values) => {
-            props.onSubmit(values);
+          props.onSubmit(values);
         }}
       >
         {({ errors, touched }) => (
           <Form className={`form-floating mb-3`}>
             <div className="mt-3 mb-4">
               <div className="form-control">
-                <label htmlFor="currentPassword">Súčasné heslo</label>
+                <label htmlFor="currentPassword">
+                  {translations?.currentPasswordLabel}
+                </label>
                 <Field
                   type="password"
                   name="currentPassword"
                   className={`form-control ${
                     errors.currentPassword && touched.currentPassword
-                      ? "is-invalid"
-                      : ""
+                      ? 'is-invalid'
+                      : ''
                   }`}
                 />
                 <ErrorMessage name="currentPassword">
@@ -56,14 +66,16 @@ const ChangePasswordForm: React.FC<Props> = (props) => {
 
             <div className="mt-3 mb-4">
               <div className="form-control">
-                <label htmlFor="newPassword">Nové heslo</label>
+                <label htmlFor="newPassword">
+                  {translations?.newPasswordLabel}
+                </label>
                 <Field
                   type="password"
                   name="newPassword"
                   className={`form-control ${
                     errors.newPassword && touched.newPassword
-                      ? "is-invalid"
-                      : ""
+                      ? 'is-invalid'
+                      : ''
                   }`}
                 />
                 <ErrorMessage name="newPassword">
@@ -75,15 +87,15 @@ const ChangePasswordForm: React.FC<Props> = (props) => {
             <div className="mt-3 mb-4">
               <div className="form-control">
                 <label htmlFor="confirmNewPassword">
-                  Potvrdenie nového hesla
+                  {translations?.confirmNewPasswordLabel}
                 </label>
                 <Field
                   type="password"
                   name="confirmNewPassword"
                   className={`form-control ${
                     errors.confirmNewPassword && touched.confirmNewPassword
-                      ? "is-invalid"
-                      : ""
+                      ? 'is-invalid'
+                      : ''
                   }`}
                 />
                 <ErrorMessage name="confirmNewPassword">
@@ -94,7 +106,7 @@ const ChangePasswordForm: React.FC<Props> = (props) => {
 
             <div className="text-center">
               <Button type="submit" className="width-responsive">
-                Potvrdiť zmenu
+                {translations?.changePasswordConfirmSubmitLabel}
               </Button>
             </div>
           </Form>

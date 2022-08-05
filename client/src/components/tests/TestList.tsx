@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 import TestClass from '../../models/TestClass';
 import { UserRole } from '../../models/User';
 import TestContext from '../../store/test-context';
-import OptionIcon from '../../assets/icons/OptionsIcon';
-import ConfirmDialogButton from '../UI/ConfirmDialogButton';
-import ModalFormButton from '../UI/ModalFormButton';
 import ProtectedComponent from '../UI/ProtectedComponent';
 import TestForm from './TestForm';
+import UpdateModalFormButton from '../UI/UpdateModalFormButton';
+import DeleteDialogButton from '../UI/DeleteDialogButton';
+import useLangTranslation from '../../hooks/useLangTranslation';
 
 type Props = {
   tests: TestClass[];
@@ -16,6 +16,7 @@ type Props = {
 
 const TestList: React.FC<Props> = (props) => {
   const testCtx = useContext(TestContext);
+  const translations = useLangTranslation();
 
   const getMaxPointsCount = (test: TestClass): number => {
     let sum = 0;
@@ -36,35 +37,31 @@ const TestList: React.FC<Props> = (props) => {
                 requiredRole={[UserRole.ADMIN, UserRole.TEACHER]}
               >
                 <div className=" d-flex flex-column d-md-block float-md-end">
-                  <ModalFormButton
-                    btnTitle="Upraviť"
-                    modalTitle="Úprava existujúceho testu"
-                    btnVariant="warning"
-                    icon={<OptionIcon />}
-                    className={'me-md-2'}
+                  <UpdateModalFormButton
+                    modalTitle={translations?.testUpdateModalTitle}
                   >
                     <TestForm
                       onSubmit={testCtx.modifyTest.bind(null, test.id)}
-                      submitBtnText="Potvrdiť zmeny"
+                      submitBtnText={translations?.updateSubmitButtonLabel}
                       formField={test}
                     />
-                  </ModalFormButton>
-
-                  <ConfirmDialogButton
-                    confirmBtnTitle="Vymazať"
+                  </UpdateModalFormButton>
+                  <DeleteDialogButton
                     className="mb-2 mt-2 mb-md-0 mt-md-0"
-                    title="Vymazanie testu"
-                    headerTitle="Naozaj chcete vymazať tento test?"
-                    onConfirm={testCtx.deleteTest.bind(null, test.id)}
+                    title={translations?.deleteTestModalTitle}
+                    headerTitle={translations?.deleteTestModalLabel}
+                    onDelete={testCtx.deleteTest.bind(null, test.id)}
                   />
                 </div>
               </ProtectedComponent>
               <p>
-                {`Názov: ${test.title}`}
+                {`${translations?.titleLabel}: ${test.title}`}
                 <br />
-                {`Počet otázok: ${test.questions.length}`}
+                {`${translations?.numberOfQuestionsLabel}: ${test.questions.length}`}
                 <br />
-                {`Maximálny počet bodov: ${getMaxPointsCount(test)}`}
+                {`${translations?.maxAmountOfPointsLabel}: ${getMaxPointsCount(
+                  test
+                )}`}
               </p>
 
               <div className="text-center">
@@ -72,7 +69,7 @@ const TestList: React.FC<Props> = (props) => {
                   className="width-responsive btn btn-primary"
                   to={`/tests/${test.id}`}
                 >
-                  Písať test
+                  {translations?.takeTestLabel}
                 </Link>
               </div>
             </Accordion.Body>
