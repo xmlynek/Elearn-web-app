@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum TokenType {
+  REFRESH
+  ACCESS
+  PASSWORD_RESET
+  EMAIL_VERIFY
+}
+
+model Token {
+  token           String    @id
+  type            TokenType @default(REFRESH)
+  expiration_date DateTime
+  valid           Boolean   @default(true)
+  user            User      @relation(fields: [user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  user_id         Int
+}
+
+model User {
+  id             Int                   @id @default(autoincrement())
+  firstname      String
+  lastname       String
+  password       String
+  email          String                @unique
+  role           Role                  @default(USER)
+  Token          Token[]
+  EvaluatedTests Evaluated_Test_User[]
+}
+
+enum Role {
+  USER
+  TEACHER
+  ADMIN
+}
+
+model Video {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String @db.Text
+  author      String
+  length      Int
+  url         String @db.VarChar(255)
+}
+
+model Test {
+  id              Int                   @id @default(autoincrement())
+  title           String
+  position        Int
+  questions       Question[]
+  finishedByUsers Evaluated_Test_User[]
+}
+
+model Question {
+  id       Int          @id @default(autoincrement())
+  title    String
+  position Int
+  points   Decimal      @db.Decimal(9, 2)
+  type     QuestionType @default(MULTIPLE_CHOICES)
+  options  Option[]
+  test     Test         @relation(fields: [testId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  testId   Int
+  answers  Answer[]
+}
+
+model Option {
+  id         Int      @id @default(autoincrement())
+  title      String
+  isCorrect  Boolean
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  questionId Int
+}
+
+model Evaluated_Test_User {
+  id           Int      @id @default(autoincrement())
+  started_at   DateTime @db.Timestamp()
+  finished_at  DateTime @default(now())
+  resultPoints Decimal  @db.Decimal(9, 2)
+  maxPoints    Decimal  @db.Decimal(9, 2)
+  testUpdated  Boolean  @default(false)
+  test         Test     @relation(fields: [testId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  testId       Int
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId       Int
+  answers      Answer[]
+}
+
+model Answer {
+  id             Int                 @id @default(autoincrement())
+  full_answer    String
+  isCorrect      Boolean
+  points         Decimal             @db.Decimal(13, 9)
+  question       Question?           @relation(fields: [questionId], references: [id], onDelete: SetNull)
+  questionId     Int?
+  finishedTest   Evaluated_Test_User @relation(fields: [finishedTestId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  finishedTestId Int
+}
+
+enum QuestionType {
+  INPUT
+  MULTIPLE_CHOICES
+  SINGLE_CHOICE
+}
+
+model Topic {
+  id       Int    @id @default(autoincrement())
+  title    String
+  filename String
+  data     Bytes
+  encoding String
+  size     Int
+  mimetype String
+  md5      String
+}

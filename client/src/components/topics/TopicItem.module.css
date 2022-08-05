@@ -1,0 +1,40 @@
+
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+#ResumeContainer {
+    margin:auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .PDFDocument {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .PDFPage {
+    box-shadow: 0 0 8px rgba(0, 0, 0, .5);
+  }
+  
+  .PDFPageOne {
+    margin-top: 25px;
+  }
+  
+  .PDFPage > canvas {
+    max-width: 100%;
+    height: auto !important;
+  }
+  
+  @media (max-width: 768px) {
+    #ResumeContainer {
+      width: 100%;
+    }
+  }
+  
