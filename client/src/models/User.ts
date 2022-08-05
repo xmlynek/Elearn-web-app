@@ -1,7 +1,7 @@
 export enum UserRole {
-  USER = "USER",
-  TEACHER = "TEACHER",
-  ADMIN = "ADMIN",
+  STUDENT = 'STUDENT',
+  TEACHER = 'TEACHER',
+  ADMIN = 'ADMIN',
 }
 
 class User {
@@ -38,7 +38,7 @@ export type PatchUserDataRequest = {
   lastname: string;
   email: string;
   password: string;
-}
+};
 
 export type UserRegistrationRequest = {
   firstname: string;
@@ -46,7 +46,7 @@ export type UserRegistrationRequest = {
   email: string;
   password: string;
   confirmPassword: string;
-}
+};
 
 export type AdminCreateUserRequest = {
   firstname: string;
@@ -54,14 +54,13 @@ export type AdminCreateUserRequest = {
   email: string;
   role: UserRole;
   password: string;
-}
+};
 
 export type UserChangePasswordRequest = {
   password: string;
   newPassword: string;
   confirmNewPassword: string;
-}
-
+};
 
 export const convertUserClassToRequest = (user: User): UserRequest => {
   return {
@@ -72,7 +71,7 @@ export const convertUserClassToRequest = (user: User): UserRequest => {
   };
 };
 
-export function extracRole(role: "USER" | "TEACHER" | "ADMIN") {
+export function extracRole(role: 'STUDENT' | 'TEACHER' | 'ADMIN') {
   return UserRole[role];
 }
 

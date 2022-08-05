@@ -28,7 +28,7 @@ const UserForm: React.FC<Props> = (props) => {
         email: '',
         firstname: '',
         lastname: '',
-        role: UserRole.USER,
+        role: UserRole.STUDENT,
         password: '',
         confirmPassword: '',
         confirmProcessData: props.registration ? false : true,
@@ -227,7 +227,7 @@ const UserForm: React.FC<Props> = (props) => {
                       errors.role && touched.role ? 'is-invalid' : ''
                     }`}
                   >
-                    <option value={UserRole.USER}>{UserRole.USER}</option>
+                    <option value={UserRole.STUDENT}>{UserRole.STUDENT}</option>
                     <option value={UserRole.TEACHER}>{UserRole.TEACHER}</option>
                     <option value={UserRole.ADMIN}>{UserRole.ADMIN}</option>
                   </Field>

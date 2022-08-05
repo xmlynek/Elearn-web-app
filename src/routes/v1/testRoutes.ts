@@ -1,3 +1,4 @@
+import { Role } from '@prisma/client';
 const express = require('express');
 const testController = require('../../controllers/testController');
 const validate = require('../../middlewares/validate');
@@ -10,7 +11,7 @@ router
   .route('/')
   .get(testController.getAllTests)
   .post(
-    auth.protect('TEACHER', 'ADMIN'),
+    auth.protect(Role.TEACHER, Role.ADMIN),
     validate(testValidation.createTest),
     testController.createTest
   );
@@ -18,17 +19,17 @@ router
 router
   .route('/:testId')
   .get(
-    auth.protect('USER', 'TEACHER', 'ADMIN'),
+    auth.protect(Role.STUDENT, Role.TEACHER, Role.ADMIN),
     validate(testValidation.getTestById),
     testController.getTestById
   )
   .put(
-    auth.protect('TEACHER', 'ADMIN'),
+    auth.protect(Role.TEACHER, Role.ADMIN),
     validate(testValidation.updateTest),
     testController.updateTest
   )
   .delete(
-    auth.protect('TEACHER', 'ADMIN'),
+    auth.protect(Role.TEACHER, Role.ADMIN),
     validate(testValidation.deleteTest),
     testController.deleteTest
   );
@@ -36,7 +37,7 @@ router
 router
   .route('/:testId/evaluate')
   .post(
-    auth.protect('USER', 'TEACHER', 'ADMIN'),
+    auth.protect(Role.STUDENT, Role.TEACHER, Role.ADMIN),
     validate(testValidation.evaluateTest),
     testController.evaluateTest
   );

@@ -77,7 +77,6 @@ export const AuthContextProvider: React.FC = (props) => {
         newToken = res.data?.token;
       })
       .catch((err) => {
-        console.log('refresh Handler err, ', err);
         setAccessToken('');
         setLoggedIn(false);
         setError(
@@ -129,7 +128,6 @@ export const AuthContextProvider: React.FC = (props) => {
     await axiosPrivate
       .post('/auth/register', data)
       .then((res) => {
-        console.log(res);
         createUserFromResponse(res);
         setAccessToken(res.data?.token);
         setLoggedIn(true);
@@ -189,7 +187,6 @@ export const AuthContextProvider: React.FC = (props) => {
       })
       .catch((err) => {
         setError('Platnosť tokenu vypršala!');
-        console.log(err);
       });
     setLoading(false);
   };

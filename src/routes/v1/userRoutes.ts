@@ -1,3 +1,4 @@
+import { Role } from '@prisma/client';
 const express = require('express');
 const userController = require('../../controllers/userController');
 const validate = require('../../middlewares/validate');
@@ -8,9 +9,9 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(auth.protect('ADMIN', 'TEACHER'), userController.getAllUsers)
+  .get(auth.protect(Role.ADMIN, Role.TEACHER), userController.getAllUsers)
   .post(
-    auth.protect('ADMIN'),
+    auth.protect(Role.ADMIN),
     validate(userValidation.createUser),
     userController.createUser
   );
@@ -18,22 +19,22 @@ router
 router
   .route('/:userId')
   .get(
-    auth.protect('ADMIN', 'TEACHER'),
+    auth.protect(Role.ADMIN, Role.TEACHER),
     validate(userValidation.getUserById),
     userController.getUserById
   )
   .delete(
-    auth.protect('ADMIN'),
+    auth.protect(Role.ADMIN),
     validate(userValidation.deleteUser),
     userController.deleteUser
   )
   .put(
-    auth.protect('ADMIN'),
+    auth.protect(Role.ADMIN),
     validate(userValidation.updateUserData),
     userController.updateUserData
   )
   .patch(
-    auth.protect('USER', 'TEACHER', 'ADMIN'),
+    auth.protect(Role.STUDENT, Role.TEACHER, Role.ADMIN),
     validate(userValidation.patchUserData),
     userController.patchUserData
   );
@@ -41,7 +42,7 @@ router
 router
   .route('/:userId/tests')
   .get(
-    auth.protect('USER', 'TEACHER', 'ADMIN'),
+    auth.protect(Role.STUDENT, Role.TEACHER, Role.ADMIN),
     validate(userValidation.getUserById),
     userController.getAllEvaluedTestsByUserId
   );
@@ -49,7 +50,7 @@ router
 router
   .route('/:userId/tests/:evalTestId')
   .get(
-    auth.protect('USER', 'TEACHER', 'ADMIN'),
+    auth.protect(Role.STUDENT, Role.TEACHER, Role.ADMIN),
     validate(userValidation.getUsersTest),
     userController.getUsersEvaluatedTest
   );

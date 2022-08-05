@@ -21,7 +21,7 @@ const createUser = async (reqBody: User) => {
       firstname: reqBody.firstname,
       lastname: reqBody.lastname,
       password: await bcrypt.hash(reqBody.password, 12),
-      role: reqBody.role ? reqBody.role : Role.USER,
+      role: reqBody.role ? reqBody.role : Role.STUDENT,
     },
   });
   return user;

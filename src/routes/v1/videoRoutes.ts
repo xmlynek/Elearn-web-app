@@ -1,3 +1,4 @@
+import { Role } from '@prisma/client';
 const express = require('express');
 const videoController = require('../../controllers/videoController');
 const { videoValidation } = require('../../validations');
@@ -10,7 +11,7 @@ router
   .route('/')
   .get(videoController.getAllVideos)
   .post(
-    auth.protect('ADMIN', 'TEACHER'),
+    auth.protect(Role.ADMIN, Role.TEACHER),
     validate(videoValidation.createVideo),
     videoController.createVideo
   );
@@ -19,12 +20,12 @@ router
   .route('/:videoId')
   .get(validate(videoValidation.getVideoById), videoController.getVideoById)
   .delete(
-    auth.protect('ADMIN', 'TEACHER'),
+    auth.protect(Role.ADMIN, Role.TEACHER),
     validate(videoValidation.deleteVideo),
     videoController.deleteVideo
   )
   .put(
-    auth.protect('ADMIN', 'TEACHER'),
+    auth.protect(Role.ADMIN, Role.TEACHER),
     validate(videoValidation.updateVideo),
     videoController.updateVideo
   );

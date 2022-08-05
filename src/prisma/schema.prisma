@@ -29,13 +29,13 @@ model User {
   lastname       String
   password       String
   email          String                @unique
-  role           Role                  @default(USER)
+  role           Role                  @default(STUDENT)
   Token          Token[]
   EvaluatedTests Evaluated_Test_User[]
 }
 
 enum Role {
-  USER
+  STUDENT
   TEACHER
   ADMIN
 }

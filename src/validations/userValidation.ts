@@ -7,7 +7,7 @@ const createUser = {
       firstname: Joi.string().required(),
       lastname: Joi.string().required(),
       email: Joi.string().required().email(),
-      role: Joi.string().valid(Role.USER, Role.TEACHER, Role.ADMIN).required(),
+      role: Joi.string().valid(Role.STUDENT, Role.TEACHER, Role.ADMIN).required(),
       password: Joi.string()
         .required()
         .min(8)
@@ -82,7 +82,7 @@ const updateUserData = {
       firstname: Joi.string().required(),
       lastname: Joi.string().required(),
       email: Joi.string().required().email(),
-      role: Joi.string().valid(Role.USER, Role.TEACHER, Role.ADMIN).required(),
+      role: Joi.string().valid(Role.STUDENT, Role.TEACHER, Role.ADMIN).required(),
     })
     .required(),
 };
