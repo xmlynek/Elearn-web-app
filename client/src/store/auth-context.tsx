@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { axiosPrivate } from '../api/config';
 import User, {
@@ -54,13 +55,16 @@ export const AuthContextProvider: React.FC = (props) => {
   const navigate = useNavigate();
 
   const reAuthHandler = useCallback(async () => {
-    axiosPrivate
-      .get('/auth/user')
-      .then((res) => {
-        createUserFromResponse(res);
-        setLoggedIn(true);
-      })
-      .catch((err) => {});
+    const reauth = Cookies.get('reauth') !== undefined;
+    if (reauth) {
+      axiosPrivate
+        .get('/auth/user')
+        .then((res) => {
+          createUserFromResponse(res);
+          setLoggedIn(true);
+        })
+        .catch((err) => {});
+    }
   }, []);
 
   const refreshTokenHandler = useCallback(async () => {
@@ -105,6 +109,7 @@ export const AuthContextProvider: React.FC = (props) => {
         createUserFromResponse(res);
         setAccessToken(res.data?.token);
         sessionStorage.setItem('token', res.data?.token);
+        Cookies.set('reauth', '1');
         setLoggedIn(true);
         setError('');
         navigate(locationState ? locationState : '/', { replace: true });
@@ -141,7 +146,8 @@ export const AuthContextProvider: React.FC = (props) => {
   };
 
   const logoutHandler = async () => {
-    await axiosPrivate.post('/auth/logout').catch(err => {});
+    await axiosPrivate.post('/auth/logout').catch((err) => {});
+    Cookies.remove('reauth');
     setAccessToken('');
     setLoading(false);
     setError('');
