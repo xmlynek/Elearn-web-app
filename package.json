@@ -4,7 +4,7 @@
   "description": "Nodejs backend for web E-learning app",
   "main": "src/server.ts",
   "scripts": {
-    "start": "ts-node src/server.ts",
+    "start": "ts-node --transpile-only src/server.ts",
     "dev": "nodemon src/server.ts",
     "build": "tsc && cd client && npm install && npm run build",
     "prisma:migrate": "dotenv -e config.env -- npx prisma migrate dev --name prisma-init",
