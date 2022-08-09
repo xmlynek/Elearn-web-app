@@ -2,6 +2,16 @@
   "name": "nodejs-backend",
   "version": "1.0.0",
   "description": "Nodejs backend for web E-learning app",
+  "author": "Filip Mlýnek <mlynekff@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "REST API",
+    "Node",
+    "TypeScript",
+    "Express",
+    "Prisma",
+    "Backend"
+  ],
   "main": "src/server.ts",
   "scripts": {
     "start": "ts-node --transpile-only src/server.ts",
@@ -20,13 +30,6 @@
   "prisma": {
     "schema": "src/prisma/schema.prisma"
   },
-  "keywords": [
-    "E-learn",
-    "Nodejs",
-    "Backend"
-  ],
-  "author": "Filip Mlýnek <mlynekff@gmail.com>",
-  "license": "ISC",
   "dependencies": {
     "@prisma/client": "^3.15.2",
     "bcryptjs": "^2.4.3",
@@ -67,6 +70,5 @@
     "prisma": "^3.15.2",
     "ts-node": "^10.8.2",
     "typescript": "^4.7.4"
-  },
-  "postinstall": "$(yarn bin)/pm2 install typescript"
+  }
 }
