@@ -85,6 +85,7 @@ This application is a Web Elearning application about the UWB technology, which 
 - Passport jwt
 - Bootstrap
 - Axios
+- Docker & docker compose
 - & many others..
   <br>
 
@@ -225,4 +226,4 @@ Design of pages and components can be found in <a href="https://github.com/xmlyn
 
 # License
 
-<a href="https://github.com/xmlynek/Elearn-web-app/LICENSE">MIT</a>
+<a href="https://github.com/xmlynek/Elearn-web-app/blob/master/LICENSE">MIT</a>
